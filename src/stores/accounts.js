@@ -1,10 +1,14 @@
 import { ref, computed } from "@stevvvns/incomponent";
-import { getAccounts, newAccount, save } from "../index.js";
+import { getAccounts, newAccount, localStorageBackend } from "../index.js";
 
 const accounts = {};
 
-export function init(validate = (data) => data ?? {}) {
-  const all = ref(getAccounts(validate));
+export function init(
+  validate = (data) => data ?? {},
+  backend = localStorageBackend,
+) {
+  const [initial, save] = getAccounts(validate, backend);
+  const all = ref(initial);
   save(all.value);
 
   function setActive(id) {
@@ -35,10 +39,10 @@ export function init(validate = (data) => data ?? {}) {
   });
 
   function remove(id) {
-    const accountIdx = all.value.findIndex(acct => acct.id === id);
+    const accountIdx = all.value.findIndex((acct) => acct.id === id);
     if (accountIdx > -1) {
       const wasActive = all.value[accountIdx].isActive;
-      all.mut(draft => {
+      all.mut((draft) => {
         draft.splice(accountIdx, 1);
         if (wasActive && draft.length > 0) {
           draft[0].isActive = true;
@@ -59,8 +63,8 @@ export function init(validate = (data) => data ?? {}) {
   });
 
   function setData(id, data, isUpdate = false) {
-    all.mut(draft => {
-      const account = draft.find(acct => acct.id === id);
+    all.mut((draft) => {
+      const account = draft.find((acct) => acct.id === id);
       if (account) {
         if (isUpdate) {
           account.data = { ...account.data, ...data };

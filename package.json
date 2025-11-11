@@ -1,6 +1,6 @@
 {
   "name": "@stevvvns/device-accounts",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "main": "dist/index.js",
   "files": [
@@ -11,9 +11,9 @@
   ],
   "scripts": {
     "build": "mkdir -p dist; cp src/index.html dist/; npx esbuild --bundle --keep-names --format=esm --platform=browser --outdir=dist src/index.js src/stores/accounts.js src/example-app.js",
-    "example": "npm run build && npx serve ./dist; npx prettier src --write",
+    "example": "npm run build && npx serve ./dist",
     "pub": "npm run build && npm publish --access=public",
-    "lint": "npx eslint --fix src"
+    "lint": "eslint --fix src; npx prettier src --write"
   },
   "author": "",
   "license": "MIT",

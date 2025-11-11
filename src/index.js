@@ -47,15 +47,6 @@ function dehydrate(accounts) {
   ]);
 }
 
-function load(validate) {
-  try {
-    return hydrate(JSON.parse(localStorage.getItem("accounts")), validate);
-  } catch (ex) {
-    console.warn(ex);
-    return [];
-  }
-}
-
 export function newAccount(data, isActive = true) {
   const keys = nacl.sign.keyPair();
   return {
@@ -67,14 +58,39 @@ export function newAccount(data, isActive = true) {
   };
 }
 
-export function save(accounts) {
-  localStorage.setItem("accounts", JSON.stringify(dehydrate(accounts)));
+export const localStorageBackend = {
+  load(validate) {
+    return localStorage.getItem("accounts");
+  },
+  save(accounts) {
+    localStorage.setItem("accounts", accounts);
+  },
+};
+
+function bindBackend(backend, validate) {
+  return {
+    save(accounts) {
+      backend.save(JSON.stringify(dehydrate(accounts)));
+    },
+    load(accounts) {
+      try {
+        return hydrate(JSON.parse(backend.load()), validate);
+      } catch (ex) {
+        console.warn(ex);
+        return [];
+      }
+    },
+  };
 }
 
-export function getAccounts(validate = (data) => data ?? {}) {
+export function getAccounts(
+  validate = (data) => data ?? {},
+  backend = localStorageBackend,
+) {
+  const { load, save } = bindBackend(backend, validate);
   const accounts = load(validate);
   if (accounts.length === 0) {
     accounts.push(newAccount(validate(undefined, [])));
   }
-  return accounts;
+  return [accounts, save];
 }
