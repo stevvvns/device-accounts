@@ -1,6 +1,6 @@
 {
   "name": "@stevvvns/device-accounts",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "type": "module",
   "main": "dist/index.js",
   "files": [
@@ -19,7 +19,7 @@
   "license": "MIT",
   "description": "",
   "dependencies": {
-    "@stevvvns/incomponent": "^0.0.20",
+    "@stevvvns/incomponent": "^0.0.21",
     "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
